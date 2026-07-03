@@ -1,0 +1,56 @@
+\documentclass[12pt,a4paper,oneside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[german]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{caption}
+
+\input{settings.tex}
+
+\begin{document}
+
+\input{pages/title.tex}
+\newpage
+
+\input{pages/disclaimer.tex}
+\newpage
+
+\pagenumbering{Roman}
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\input{chapters/01_einleitung.tex}
+\input{chapters/02_zielsetzung.tex}
+\input{chapters/03_hardware.tex}
+\input{chapters/04_software.tex}
+\input{chapters/05_ml.tex}
+\input{chapters/06_zusammenfassung.tex}
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\begin{thebibliography}{99}
+    \bibitem{myo_dataset} 
+    Michidk, \textit{Myo-Dataset GitHub Repository}, \url{https://github.com/michidk/myo-dataset}, abgerufen am 22.06.2026.
+    % Weitere Quellen hier einfügen
+\end{thebibliography}
+\newpage
+
+\section*{Übersicht verwendeter Hilfsmittel}
+\label{sec:hilfsmittel}
+% TODO Vorgabe laut Erklärung zur Projektarbeit der HS Landshut
+[Übersicht und Dokumentation der genutzten KI-Werkzeuge und Prompts gemäß den Richtlinien]
+
+\end{document}
+    
