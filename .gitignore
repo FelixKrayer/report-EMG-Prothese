@@ -2,6 +2,9 @@
 !/build/main.pdf
 /logos/*.pdf
 
+## VS Code
+.vscode/
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof

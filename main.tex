@@ -9,6 +9,7 @@
 \usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{caption}
+\usepackage{acronym}
 
 \input{settings.tex}
 
@@ -22,6 +23,9 @@
 
 \pagenumbering{Roman}
 \tableofcontents
+\newpage
+
+\input{pages/acronyms.tex}
 \newpage
 
 \pagenumbering{arabic}
@@ -40,11 +44,9 @@
 \listoftables
 \newpage
 
-\begin{thebibliography}{99}
-    \bibitem{myo_dataset} 
-    Michidk, \textit{Myo-Dataset GitHub Repository}, \url{https://github.com/michidk/myo-dataset}, abgerufen am 22.06.2026.
-    % Weitere Quellen hier einfügen
-\end{thebibliography}
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{bibliography}
 \newpage
 
 \section*{Übersicht verwendeter Hilfsmittel}
