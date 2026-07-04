@@ -1,10 +1,41 @@
 \section{Hardware- und Elektronikentwicklung}
 \label{sec:hardware}
-\subsection{Erweiterung der EMG-Kanäle (ADS1298)}
-[Details zum Wechsel von ADS1294 auf ADS1298 und der Erhöhung auf 8 Kanäle]
+Die Zuverlässigkeit einer myoelektrischen Prothesensteuerung hängt maßgeblich von der Qualität der erfassten Analogsignale ab. Da sich die Amplituden von \ac{sEMG}-Signalen im mikro- bis niedrigen Millivoltbereich bewegen, stellt das Design der Leiterplatte hohe Anforderungen an die elektromagnetische Verträglichkeit und die Signalintegrität. In diesm Kapitel wird die hardwareseitige Überarbeitung und Erweiterung der Prothesenelektronik beschrieben.
+    \subsection{Erweiterung der sEMG-Kanäle und Platinen-Redesign}
+    Das im Vorsemester entwickelte Hardware-Konzept hat sich als verlässliche Basis bewiesen und wurde in seinem Grundaufbau übernommen~\cite{ZeitlerLaubhan2026}. Das Primäre Ziel des Redesigns besteht darin, die Anzahl der Messkanäle von vier auf acht zu erhöhen und bekannte Schwachstellen der ersten Prototypen-Generation zu eliminieren. 
+        \subsubsection{Bestehender Grundaufbau}
+        Das Layout der Platine wurde beibehalten. Die Leiterplatte unterteilt sich weiterhin in zwei strikt galvanisch getrennte Bereiche, um die Sicherheit des Nutzers gemäß medizinischen Standards zu garantieren und das Einkoppeln von Schaltregler- und Motorrauschen zu verhindern. Der Aufbau gliedert sich weiterhin wie folgt:
+        \begin{itemize}
+            \item \textbf{Digitale Prothesenseite:} Hier befindet sich der zentrale Mikrocontroller (Teensy~4.1), die Peripherie zur Ansteuerung der Servomotoren sowie die primäre Spannungsversorgung.
+            \item \textbf{Isolierte Analogseite:} Dieser Bereich beherbergt den ADS129x als Biosignalverstärker, Analog Front-End und Analog-Digital-Wandler in einem Bauteil. Des Weiteren befinden sich hier die Steckverbindungen zu den \ac{sEMG}-Elektroden mit den dazugehörigen Eingangsfiltern.
+            \item \textbf{Isolationsbariere:} Die Trennung wird hardwareseitig durch zwei digitale Isolatoren realisiert, über die die SPI-Kommunikation des ADS129x mit dem Teensy~4.1 stattfindet. Des Weiteren fungiert einer der beiden Isolatoren als DC/DC-Wandler um die 5V Eingangsspannung auf die 3,3V der Analogseite zu übertragen.
+        \end{itemize}
 
-\subsection{Anschlusstechnik und Signalstabilität}
-[Details zu den 1,5 mm Goldpins und der robusteren mechanischen Anbindung]
+        \subsubsection{Optimierungen aus den Erkenntnissen des Vorsemesters}
+        Bei der Überarbeitung des Layouts wurden zwei wesentliche Detailverbesserungen vorgenommen, die unmittelbar aus den praktischen Erfahrungen der vorherigen Inbetriebnahme basieren.
 
-\subsection{Konstruktion der Elektroden-Armbänder}
-[Beschreibung der Gummiband-Konstruktion für äquidistante P- und N-Elektroden]
+        Zum einen betrifft dies die Korrektur des Versorgungslayouts durch die vollständige Eliminierung eines fehleranfälligen Jumpers. Im vorherigen Entwurf existierte ein Designfehler im Bereich des digitalen Isolators, bei dem ein dort platzierter 3,3\,V-Jumper bei Entfernen die Spannungsversorgung der isolationsinternen Logik unterbrach. Dies resultierte ausgangsseitig in einer zu hohen Spannung von 4,2\,V sowie einer kritischen thermischen Belastung des Bauteils. Im neuen Layout wurden die entsprechenden Versorgungspins daher im Layout der Leiterplatte fest überbrückt, um diesen Fehler auszuschließen.
+
+        Außerdem konnte die analoge Eingangsfiltrierung erheblich kompaktiert werden, welche als RC-Tiefpass an jedem Messeingang zur Dämpfung von Hochfrequenzstörungen und als Antialiasing-Filter dient. Dabei wurden die als optimal ermittelten Filterwerte von 5,1\,k$\Omega$ und 1\,nF aus dem Vorbericht übernommen. Um den Platzbedarf auf der Platine trotz der verdoppelten Kanalanzahl zu minimieren und gleichzeitig die Bestückung der Platine zu vereinfachen, wurden die zuvor getrennt platzierten Widerstände durch integrierte SMD-Resistor-Arrays ersetzt, welche jeweils vier 5\,k$\Omega$-Widerstände in einem Bauteil vereinen.
+
+        \subsubsection{Kanalerweiterung durch Wechsel auf den ADS1298}
+        Die Erhöhung der Kanalanzahl von vier auf acht Kanäle ließ sich dank der durchtachten Bauteilauswhl des Vorsemers sehr leichtgewichtig umsetzen. Es wurde von der 4-Kanal-Variante des Biosignalverstärkers (ADS1294) auf die 8-Kanal-Variante (ADS1298) gewechselt. Da beide integrierten Schaltkreise innerhalb ihrer Gehäuse vollständig pin-kompatibel sind, blieb der Anschluss der Versorgungs-, Referenz- und Kommunikationspins identisch.
+
+        Hardwareseitig mussten im Layout lediglich die zuvor ungenutzten und auf Masse gelegten differenziellen Eingangspins (pro Kanal jeweils ein positiver P- und ein negativer N-Eingang) an die neuen Elektrodenanschlüsse herangeführt werden. Auch die Softwareanpassung gestaltete sich als sehr leichtgewichtig, da im Wesentlichen nur eine Kanalanzahl-Konstante in der Firmware angepasst werden musste.
+
+        \subsubsection{Modifikation der Steckverbindungen}
+        Eine wichtige mechanische und elektrische Verbesserung betrifft die Eingangsbuchsen der Elektroden. In der ersten Generation wurden 3,5\,mm Klinkenbuchsen verwendet. Diese neigten im Praxisbetrieb zu ungleichmäßiger Signalqualität, wobei es insbesondere es massive qualitative Unterschiede zwischen verschiedenen Anschlusskabeln gab. Dies Äußerte sich in einem inkonsistenten Rauschverhalten.
+
+        Im Redesign wurden die Klinkenbuchsen vollständig durch 1,5\,mm Anschlusspins ersetzt, die dem Standard bei \acs{EKG}- und \acs{EMG}-Geräten in der medizinischen Diagnostik entsprechen. In der Praxis zeigte sich durch diesen Wechsel eine konsistente Signalqualität über alle Kanäle hinweg. Die kabelabhängige Varianz der Rauschwerte wurde eliminiert, sodass alle acht Kanäle qualitativ das niedrige Grundrauschen erreichen, das zuvor nur mit den hochwertigen Klinkenkabeln erzielt werden konnte.
+
+        \begin{figure}
+            \textit{TODO hier Vergleich zwischen altem und neuen Layout}
+        \end{figure}
+
+        \subsubsection{Inbetriebnahme}
+        Nach der Fertigung und Bestückung der neuen Platine wurde das neue System in Betrieb genommen. Zur schnellen visuellen Funktionskontrolle wurde testweise ein \ac{EKG} aufgenommen, da dessen markanter Signalverlauf eine Zuverlässige Beurteilung der Hardwarefunktionalität erlaubt. Dabei zeigte sich ein massives, breitbandiges Rauschen, welches das eigentliche Biosignal vollständig überlagerte. Als potentielle Ursache wurden Potentialverschiebungen des menschlichen Körpers gegenüber der analogen Masse \texttt{AGND} identifiziert. Da der Körper wie eine Antenne wirkt, koppelt er gegebenenfalls starke Störfrequenzen aus der Umgebung ein, wie beispielsweise das 50Hz Netzbrummen.
+
+        Die Lösung dieses Problems lag darin, den bereits implementierten \ac{RLD} des ADS1298 mit der analogen Masse \texttt{AGND} zu verbinden. Diese Schaltung greift das Gleichtaktsignal der Messkanäle ab, invertiert es und speist es aktiv über eine Referenzelektrode zurück in den Körper ein, um die Störungen destruktiv zu überlagern. Da der \ac{RLD}-Kreis jedoch zuvor keinen direkten, stabilen Bezug zu \texttt{AGND} aufwies, konnte er die Potenzialverschiebungen nicht optimal ausgleichen. Die Lösung wurde durch das Setzen einer Dratbrücke realisiert, welche auf den \texttt{AGND}-Pin gesteckt und an der anderen seite auf das \ac{RLD}-Testfeld gelötet wurde. Mit dieser Anpassung stabilisierte sich das System, wodurch das Breitbandrauschen vollständig und dauerhaft eliminiert werden konnte. Damit bildet das System eine solide Basis für fehlerfreie Signalaufzeichnung im späteren Betrieb.
+
+    \subsection{Konstruktion der Elektroden-Armbänder}
+    [Beschreibung der Gummiband-Konstruktion für äquidistante P- und N-Elektroden]
