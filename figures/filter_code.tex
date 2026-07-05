@@ -1,0 +1,29 @@
+        \begin{figure*}
+            \begin{lstlisting}[style=myArduino, caption={Implementierung der Biquad Filter auf dem Teensy~4.1}, label={code:filter}]
+struct BiquadFilter {
+    float b0, b1, b2;
+    float a1, a2;
+    // Vergangene Eingaenge
+    float x1[NUM_CHANNELS], x2[NUM_CHANNELS];
+    // Vergangene Ausgaenge
+    float y1[NUM_CHANNELS], y2[NUM_CHANNELS];
+};
+
+// Filterkoeffizienten fuer f_s = 1000Hz
+BiquadFilter highpass15 = {0.935529, -1.871059, 0.935529, -1.866892, 0.875225, 0, 0, 0, 0};
+BiquadFilter notch50    = {0.994783, -1.892214, 0.994783, -1.892214, 0.989566, 0, 0, 0, 0};
+
+float processBiquad(int ch, float sample, BiquadFilter &f) {
+    float out = f.b0 * sample + f.b1 * f.x1[ch] + f.b2 * f.x2[ch] 
+            - f.a1 * f.y1[ch] - f.a2 * f.y2[ch];
+    
+    // Zustandsspeicher fuer den entsprechenden Kanal aktualisieren
+    f.x2[ch] = f.x1[ch];
+    f.x1[ch] = sample;
+    f.y2[ch] = f.y1[ch];
+    f.y1[ch] = out;
+    
+    return out;
+}
+            \end{lstlisting}
+        \end{figure*}
