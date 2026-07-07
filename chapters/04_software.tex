@@ -1,6 +1,6 @@
 \section{Softwarearchitektur und Signalverarbeitung}
 \label{sec:software}
-    Um die vom \acf{AFE} erfassten Muskelaktivitäten in präzise Steuerbefehle für die Handprothese zu übersetzen, bedarf es einer performanten Softwarearchitektur auf dem Mikrocontroller. Dieses Kapitel beschreibt die softwareseitige Implementierung auf dem \textsf{Teensy~4.1}. Die Architektur unterteilt sich im Wesentlichen in die hardwarenahe Datenakquisition über \ac{SPI}, die digitale Signalaufbereitung mittels Frequenzfiltern sowie die anschließende Feature-Extraktion und Klassifikation.
+    Um die vom \acf{AFE} erfassten Muskelaktivitäten in präzise Steuerbefehle für die Handprothese zu übersetzen, bedarf es einer performanten Softwarearchitektur auf dem Mikrocontroller. Dieser Abschnitt beschreibt die softwareseitige Implementierung auf dem \textsf{Teensy~4.1}. Die Architektur unterteilt sich im Wesentlichen in die hardwarenahe Datenakquisition über \ac{SPI}, die digitale Signalaufbereitung mittels Frequenzfiltern sowie die anschließende Feature-Extraktion und Klassifikation.
     \subsection{Datenakquisition und Firmware-Anpassungen}
     \label{subsec:firmware_main}
         Die Basis der Signalverarbeitung bildet die Abfrage des \ac{AFE}. Während im Vorsemester ein \textsf{ADS1294} eingesetzt wurde, bei dem firmwareseitig vier Kanäle aktiv ausgelesen wurden und vier über \ac{SPI} gesendete Dummy-Pakete verworfen wurden, erfolgt in der neuen Version der vollständige Umstieg auf den \textsf{ADS1298}. Damit einhergehend wurde die zentrale Firmware so erweitert, dass nun alle acht verfügbaren Kanäle parallel erfasst und verarbeitet werden.
@@ -15,6 +15,7 @@
 
 
     \subsection{Digitale Filterung auf dem Mikrocontroller}
+        \label{subsec:biquad_filter}
         Bevor die akquirierten Daten über die Serielle Schnittstelle ausgegeben, oder in einem Ringpuffer für die Klassifikation gespeichert werden, durchlaufen sie eine digitale Filterkaskade um die Rohdaten von Störanteilen zu befreien. Die Ziele bestehen zum einen in der Entfernung des 50\,Hz-Netzbrummens sowie dessen Harmonischen und zum anderen in einer Hochpassfilterung, um niederfrequente Bewegungsartefakte zu eliminieren und die Signale um null zu zentrieren. Während im Vorsemester lediglich eine mathematische Baseline-Korrektur mittels eines Hochpassfilters erster Ordnung stattfand, wurde die Signalverarbeitungskette in der aktuellen Firmware um eine kaskadierte Biquad-Filterstruktur erweitert. Die Filterpipeline operiert bei einer Abtastrate von 1000\,Hz auf allen acht Kanälen und setzt sich aus den folgenden vier Stufen zusammen:
         \begin{itemize}[leftmargin=35px]
             \item[1.] \textbf{Hochpassfilter (15\,Hz):} Dämpft niederfrequente Bewegungsartefakte.

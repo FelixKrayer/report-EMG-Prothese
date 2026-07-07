@@ -1,14 +1,14 @@
 \section{Hardware- und Elektronikentwicklung}
 \label{sec:hardware}
-Die Zuverlässigkeit einer myoelektrischen Prothesensteuerung hängt maßgeblich von der Qualität der erfassten Analogsignale ab. Da sich die Amplituden von \ac{sEMG}-Signalen im mikro- bis niedrigen Millivoltbereich bewegen, stellt das Design der Leiterplatte hohe Anforderungen an die elektromagnetische Verträglichkeit und die Signalintegrität. In diesem Kapitel wird die hardwareseitige Überarbeitung und Erweiterung der Prothesenelektronik beschrieben.
+Die Zuverlässigkeit einer myoelektrischen Prothesensteuerung hängt maßgeblich von der Qualität der erfassten Analogsignale ab. Da sich die Amplituden von \ac{sEMG}-Signalen im mikro- bis niedrigen Millivoltbereich bewegen, stellt das Design der Leiterplatte hohe Anforderungen an die elektromagnetische Verträglichkeit und die Signalintegrität. In diesem Abschnitt wird die hardwareseitige Überarbeitung und Erweiterung der Prothesenelektronik beschrieben.
     \subsection{Erweiterung der sEMG-Kanäle und Platinen-Redesign}
     Das im Vorsemester entwickelte Hardware-Konzept hat sich als verlässliche Basis bewiesen und wurde in seinem Grundaufbau übernommen~\cite{ZeitlerLaubhan2026}. Das Primäre Ziel des Redesigns besteht darin, die Anzahl der Messkanäle von vier auf acht zu erhöhen und bekannte Schwachstellen der ersten Prototypen-Generation zu eliminieren. 
         \subsubsection{Bestehender Grundaufbau}
         Das Layout der Platine wurde beibehalten. Die Leiterplatte unterteilt sich weiterhin in zwei strikt galvanisch getrennte Bereiche, um die Sicherheit des Nutzers gemäß medizinischen Standards zu garantieren und das Einkoppeln von Schaltregler- und Motorrauschen zu verhindern. Der Aufbau gliedert sich weiterhin wie folgt:
         \begin{itemize}
             \item \textbf{Digitale Prothesenseite:} Hier befindet sich der zentrale Mikrocontroller (\textsf{Teensy~4.1}), die Peripherie zur Ansteuerung der Servomotoren sowie die primäre Spannungsversorgung.
-            \item \textbf{Isolierte Analogseite:} Dieser Bereich beherbergt den ADS129x als Biosignalverstärker, \ac{AFE} und Analog-Digital-Wandler in einem Bauteil. Des Weiteren befinden sich hier die Steckverbindungen zu den \ac{sEMG}-Elektroden mit den dazugehörigen Eingangsfiltern.
-            \item \textbf{Isolationsbariere:} Die Trennung wird hardwareseitig durch zwei digitale Isolatoren realisiert, über die die SPI-Kommunikation des ADS129x mit dem \textsf{Teensy~4.1} stattfindet. Des Weiteren fungiert einer der beiden Isolatoren als DC/DC-Wandler um die 5V Eingangsspannung auf die 3,3V der Analogseite zu übertragen.
+            \item \textbf{Isolierte Analogseite:} Dieser Bereich beherbergt den \textsf{ADS129x} als Biosignalverstärker, \ac{AFE} und Analog-Digital-Wandler in einem Bauteil. Des Weiteren befinden sich hier die Steckverbindungen zu den \ac{sEMG}-Elektroden mit den dazugehörigen Eingangsfiltern.
+            \item \textbf{Isolationsbariere:} Die Trennung wird hardwareseitig durch zwei digitale Isolatoren realisiert, über die die SPI-Kommunikation des \textsf{ADS129x} mit dem \textsf{Teensy~4.1} stattfindet. Des Weiteren fungiert einer der beiden Isolatoren als DC/DC-Wandler um die 5V Eingangsspannung auf die 3,3V der Analogseite zu übertragen.
         \end{itemize}
 
         \subsubsection{Optimierungen aus den Erkenntnissen des Vorsemesters}

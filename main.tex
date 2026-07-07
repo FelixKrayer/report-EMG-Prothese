@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[german]{babel}
 \usepackage[T1]{fontenc}
+\usepackage{csquotes}
 \usepackage{amsmath,amsfonts,amssymb}
 \usepackage{graphicx}
 \usepackage{geometry}
@@ -13,6 +14,9 @@
 \usepackage{acronym}
 \usepackage{enumitem}
 \usepackage{listings}
+
+\usepackage[backend=biber, style=numeric]{biblatex}
+\addbibresource{bibliography.bib}
 
 \input{settings.tex}
 
@@ -48,8 +52,9 @@
 \newpage
 
 \nocite{*}
-\bibliographystyle{plain}
-\bibliography{bibliography}
+%\bibliographystyle{plain}
+%\bibliography{bibliography}
+\printbibliography
 \newpage
 
 \section*{Übersicht verwendeter Hilfsmittel}

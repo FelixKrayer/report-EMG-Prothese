@@ -1,5 +1,6 @@
 - Inhalte der Kapitel ausformulieren
-- Platzhaltertexte durch echte Projektbeschreibung ersetzen
-- Grafiken in `figures/` einfügen
-- Literatur in `bibliography.bib` ergänzen
 - Muskelaktivierung Flexion/Extension
+
+- Ninapro and https://archive.ics.uci.edu/dataset/481/emg+data+for+gestures for future
+- Parameter biquad ermittlung
+- Programm Namen?
