@@ -1,11 +1,4 @@
-- Inhalte der Kapitel ausformulieren
-- Muskelaktivierung Flexion/Extension
-
-- Ninapro and https://archive.ics.uci.edu/dataset/481/emg+data+for+gestures for future
 - Parameter biquad ermittlung
 - Programm Namen?
-
-- Interessant, zeitverlauf von RMS und MAV zu sehen, wie sie bei einer Muskelaktivierung langsam ansteigen und sinken (kann das durch ein kürzeres Zeitfenster beschleunigt werden?)
-- Weitere Sensoren? (verewis auf sensorhandschuh mit drucksensoren)
 
 - bilder von eindrucksvollen schere/stein/Papier-Signalen?
