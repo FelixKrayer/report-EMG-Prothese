@@ -14,6 +14,7 @@
 \usepackage{acronym}
 \usepackage{enumitem}
 \usepackage{listings}
+\usepackage{subcaption}
 
 \usepackage[backend=biber, style=numeric]{biblatex}
 \addbibresource{bibliography.bib}
@@ -38,33 +39,41 @@
 \input{pages/acronyms.tex}
 \newpage
 
-\pagenumbering{arabic}
-\setcounter{page}{1}
-\input{chapters/01_einleitung.tex}
-\input{chapters/02_zielsetzung.tex}
-\input{chapters/03_hardware.tex}
-\input{chapters/04_software.tex}
-\input{chapters/05_ml.tex}
-\input{chapters/06_evaluierung.tex}
-\input{chapters/07_zusammenfassung.tex}
-\newpage
 
+\cleardoublepage 
+\phantomsection 
+\addcontentsline{toc}{section}{\listfigurename}
 \listoffigures
 \newpage
 
-\listoftables
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\input{chapters/01_einleitung.tex}
+\newpage
+\input{chapters/02_zielsetzung.tex}
+\newpage
+\input{chapters/03_hardware.tex}
+\newpage
+\input{chapters/04_software.tex}
+\newpage
+\input{chapters/05_ml.tex}
+\newpage
+\input{chapters/06_evaluierung.tex}
+\newpage
+\input{chapters/07_zusammenfassung.tex}
 \newpage
 
 \nocite{*}
-%\bibliographystyle{plain}
-%\bibliography{bibliography}
+
+\cleardoublepage 
+\phantomsection 
+\addcontentsline{toc}{section}{Literaturverzeichnis}
 \printbibliography
 \newpage
 
-\section*{Übersicht verwendeter Hilfsmittel}
-\label{sec:hilfsmittel}
-% TODO Vorgabe laut Erklärung zur Projektarbeit der HS Landshut
-[Übersicht und Dokumentation der genutzten KI-Werkzeuge und Prompts gemäß den Richtlinien]
+\appendix
+
+\input{pages/hilfsmittel.tex}
 
 \end{document}
     

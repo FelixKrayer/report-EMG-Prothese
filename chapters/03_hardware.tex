@@ -2,39 +2,85 @@
 \label{sec:hardware}
 Die Zuverlässigkeit einer myoelektrischen Prothesensteuerung hängt maßgeblich von der Qualität der erfassten Analogsignale ab. Da sich die Amplituden von \ac{sEMG}-Signalen im mikro- bis niedrigen Millivoltbereich bewegen, stellt das Design der Leiterplatte hohe Anforderungen an die elektromagnetische Verträglichkeit und die Signalintegrität. In diesem Abschnitt wird die hardwareseitige Überarbeitung und Erweiterung der Prothesenelektronik beschrieben.
     \subsection{Erweiterung der sEMG-Kanäle und Platinen-Redesign}
-    Das im Vorsemester entwickelte Hardware-Konzept hat sich als verlässliche Basis bewiesen und wurde in seinem Grundaufbau übernommen~\cite{ZeitlerLaubhan2026}. Das Primäre Ziel des Redesigns besteht darin, die Anzahl der Messkanäle von vier auf acht zu erhöhen und bekannte Schwachstellen der ersten Prototypen-Generation zu eliminieren. 
+    Das im Vorsemester entwickelte Hardware-Konzept hat sich als verlässliche Basis bewiesen und wurde in seinem Grundaufbau übernommen~\cite{ZeitlerLaubhan2026}. Das primäre Ziel des Redesigns besteht darin, die Anzahl der Messkanäle von vier auf acht zu erhöhen und bekannte Schwachstellen der ersten Prototypen-Generation zu eliminieren. 
         \subsubsection{Bestehender Grundaufbau}
-        Das Layout der Platine wurde beibehalten. Die Leiterplatte unterteilt sich weiterhin in zwei strikt galvanisch getrennte Bereiche, um die Sicherheit des Nutzers gemäß medizinischen Standards zu garantieren und das Einkoppeln von Schaltregler- und Motorrauschen zu verhindern. Der Aufbau gliedert sich weiterhin wie folgt:
+        Das Layout der Platine wurde beibehalten. Die Leiterplatte unterteilt sich weiterhin in zwei strikt galvanisch getrennte Bereiche, um die Sicherheit des Nutzers gemäß medizinischen Standards zu garantieren und das Einkoppeln von Schaltregler- und Motorrauschen zu verhindern. Der Aufbau gliedert sich weiterhin wie folgt (vgl. Platinenaufbau in \autoref{fig:gesamtaufbau_system}):
         \begin{itemize}
             \item \textbf{Digitale Prothesenseite:} Hier befindet sich der zentrale Mikrocontroller (\textsf{Teensy~4.1}), die Peripherie zur Ansteuerung der Servomotoren sowie die primäre Spannungsversorgung.
             \item \textbf{Isolierte Analogseite:} Dieser Bereich beherbergt den \textsf{ADS129x} als Biosignalverstärker, \ac{AFE} und Analog-Digital-Wandler in einem Bauteil. Des Weiteren befinden sich hier die Steckverbindungen zu den \ac{sEMG}-Elektroden mit den dazugehörigen Eingangsfiltern.
-            \item \textbf{Isolationsbariere:} Die Trennung wird hardwareseitig durch zwei digitale Isolatoren realisiert, über die die SPI-Kommunikation des \textsf{ADS129x} mit dem \textsf{Teensy~4.1} stattfindet. Des Weiteren fungiert einer der beiden Isolatoren als DC/DC-Wandler um die 5V Eingangsspannung auf die 3,3V der Analogseite zu übertragen.
+            \item \textbf{Isolationsbarriere:} Die Trennung wird hardwareseitig durch zwei digitale Isolatoren realisiert, über die die SPI-Kommunikation des \textsf{ADS129x} mit dem \textsf{Teensy~4.1} stattfindet. Des Weiteren fungiert einer der beiden Isolatoren als DC/DC-Wandler um die 5V Eingangsspannung auf die 3,3V der Analogseite zu übertragen.
         \end{itemize}
+
+        \begin{figure}[htbp]
+            \centering
+            \includegraphics[width=0.95\textwidth]{figures/Board_and_Arm_annotated.png}
+            \caption[Gesamtaufbau der Platine mit sEMG-Armbändern]{
+                Gesamtaufbau des Messsystems im praktischen Einsatz. 
+                Die überarbeitete Leiterplatte (oben) mit dem \textsf{Teensy~4.1}, dem Biosignalverstärker \textsf{ADS1298}, der galvanischen Trennung und den Motor-Anschlüssen ist über die sEMG-Anschlüsse mit den zwei elastischen Trockenelektroden-Armbändern (unten) am Unterarm des Nutzers verbunden.
+            }
+            \label{fig:gesamtaufbau_system}
+        \end{figure}
 
         \subsubsection{Optimierungen aus den Erkenntnissen des Vorsemesters}
         Bei der Überarbeitung des Layouts wurden zwei wesentliche Detailverbesserungen vorgenommen, die unmittelbar aus den praktischen Erfahrungen der vorherigen Inbetriebnahme basieren.
 
         Zum einen betrifft dies die Korrektur des Versorgungslayouts durch die vollständige Eliminierung eines fehleranfälligen Jumpers. Im vorherigen Entwurf existierte ein Designfehler im Bereich des digitalen Isolators, bei dem ein dort platzierter 3,3\,V-Jumper bei Entfernen die Spannungsversorgung der isolationsinternen Logik unterbrach. Dies resultierte ausgangsseitig in einer zu hohen Spannung von 4,2\,V sowie einer kritischen thermischen Belastung des Bauteils. Im neuen Layout wurden die entsprechenden Versorgungspins daher im Layout der Leiterplatte fest überbrückt, um diesen Fehler auszuschließen.
 
-        Außerdem konnte die analoge Eingangsfilterung erheblich kompaktiert werden, welche als RC-Tiefpass an jedem Messeingang zur Dämpfung von Hochfrequenzstörungen und als Antialiasing-Filter dient. Dabei wurden die als optimal ermittelten Filterwerte von 5,1\,k$\Omega$ und 1\,nF aus dem Vorbericht übernommen. Um den Platzbedarf auf der Platine trotz der verdoppelten Kanalanzahl zu minimieren und gleichzeitig die Bestückung der Platine zu vereinfachen, wurden die zuvor getrennt platzierten Widerstände durch integrierte SMD-Resistor-Arrays ersetzt, welche jeweils vier 5\,k$\Omega$-Widerstände in einem Bauteil vereinen.
+        Außerdem konnte die analoge Eingangsfilterung erheblich kompaktiert werden, welche als RC-Tiefpass an jedem Messeingang zur Dämpfung von Hochfrequenzstörungen und als Antialiasing-Filter dient. Dabei wurden die als optimal ermittelten Filterwerte von 5,1\,k$\Omega$ und 1\,nF aus dem Vorbericht übernommen. Um den Platzbedarf auf der Platine trotz der verdoppelten Kanalanzahl zu minimieren und gleichzeitig die Bestückung der Platine zu vereinfachen, wurden die zuvor getrennt platzierten Widerstände durch integrierte SMD-Resistor-Arrays ersetzt, welche jeweils vier 5\,k$\Omega$-Widerstände in einem Bauteil vereinen. Der resultierende Aufbau der modifizierten Bereiche ist im direkten Vergleich der beiden Layout-Generationen in \autoref{fig:platinen_vergleich} ersichtlich.
+
+        \begin{figure}[tb]
+            \centering
+            \begin{subfigure}[b]{0.49\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{figures/layout_v1_front.png} 
+                \caption{Altes Layout -- Vorderseite}
+                \label{fig:platine_alt_vorne}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[b]{0.49\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{figures/layout_v1_back.png} 
+                \caption{Altes Layout -- Rückseite}
+                \label{fig:platine_alt_hinten}
+            \end{subfigure}
+            
+            \vspace{1em} 
+            
+            \begin{subfigure}[b]{0.49\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{figures/layout_v2_front.png} 
+                \caption{Neues Layout -- Vorderseite}
+                \label{fig:platine_neu_vorne}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[b]{0.49\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{figures/layout_v2_back.png} 
+                \caption{Neues Layout -- Rückseite}
+                \label{fig:platine_neu_hinten}
+            \end{subfigure}
+
+            \caption[Vergleich des Platinen-Layouts vor und nach der Überarbeitung]{
+                Vergleich des Platinen-Layouts vor und nach der Überarbeitung. 
+                Die obere Reihe zeigt das ursprüngliche Design (links Vorderseite, rechts Rückseite), 
+                die untere Reihe das optimierte neue Layout (links Vorderseite, rechts Rückseite).%
+            }
+            \label{fig:platinen_vergleich}
+        \end{figure}
 
         \subsubsection{Kanalerweiterung durch Wechsel auf den \textsf{ADS1298}}
         \label{subsec:HW_kanalerweiterung}
         Die Erhöhung der Kanalanzahl von vier auf acht Kanäle ließ sich dank der durchdachten Bauteilauswahl des Vorsemesters sehr leichtgewichtig umsetzen. Es wurde von der 4-Kanal-Variante des Biosignalverstärkers (\textsf{ADS1294}) auf die 8-Kanal-Variante (\textsf{ADS1298}) gewechselt. Da beide integrierten Schaltkreise innerhalb ihrer Gehäuse vollständig pin-kompatibel sind, blieb der Anschluss der Versorgungs-, Referenz- und Kommunikationspins identisch.
 
-        Hardwareseitig mussten im Layout lediglich die zuvor ungenutzten und auf Masse gelegten differenziellen Eingangspins (pro Kanal jeweils ein positiver P- und ein negativer N-Eingang) an die neuen Elektrodenanschlüsse herangeführt werden. Auch die Softwareanpassung gestaltete sich als sehr leichtgewichtig, da im Wesentlichen nur einzelne Kanalanzahl-Konstante in der Firmware angepasst werden mussten.
+        Hardwareseitig mussten im Layout lediglich die zuvor ungenutzten und auf Masse gelegten differenziellen Eingangspins (pro Kanal jeweils ein positiver P- und ein negativer N-Eingang) an die neuen Elektrodenanschlüsse herangeführt werden (siehe \autoref{fig:platinen_vergleich}). Auch die Softwareanpassung gestaltete sich als sehr leichtgewichtig, da im Wesentlichen nur einzelne Kanalanzahl-Konstante in der Firmware angepasst werden mussten.
 
         \subsubsection{Modifikation der Steckverbindungen}
-        Eine wichtige mechanische und elektrische Verbesserung betrifft die Eingangsbuchsen der Elektroden. In der ersten Generation wurden 3,5\,mm Klinkenbuchsen verwendet. Diese neigten im Praxisbetrieb zu ungleichmäßiger Signalqualität, wobei es insbesondere es massive qualitative Unterschiede zwischen verschiedenen Anschlusskabeln gab. Dies Äußerte sich in einem inkonsistenten Rauschverhalten.
+        Eine wichtige mechanische und elektrische Verbesserung betrifft die Eingangsbuchsen der Elektroden. In der ersten Generation wurden 3,5\,mm Klinkenbuchsen verwendet. Diese neigten im Praxisbetrieb zu ungleichmäßiger Signalqualität, wobei es insbesondere massive qualitative Unterschiede zwischen verschiedenen Anschlusskabeln gab. Dies äußerte sich in einem inkonsistenten Rauschverhalten.
 
         Im Redesign wurden die Klinkenbuchsen vollständig durch 1,5\,mm Anschlusspins ersetzt, die dem Standard bei \acs{EKG}- und \acs{EMG}-Geräten in der medizinischen Diagnostik entsprechen. In der Praxis zeigte sich durch diesen Wechsel eine konsistente Signalqualität über alle Kanäle hinweg. Die kabelabhängige Varianz der Rauschwerte wurde eliminiert, sodass alle acht Kanäle qualitativ das niedrige Grundrauschen erreichen, das zuvor nur mit den hochwertigen Klinkenkabeln erzielt werden konnte.
 
-        \begin{figure}
-            \textit{TODO hier Vergleich zwischen altem und neuen Layout}
-        \end{figure}
-
         \subsubsection{Inbetriebnahme}
-        Nach der Fertigung und Bestückung der neuen Platine wurde das neue System in Betrieb genommen. Zur schnellen visuellen Funktionskontrolle wurde testweise ein \ac{EKG} aufgenommen, da dessen markanter Signalverlauf eine Zuverlässige Beurteilung der Hardwarefunktionalität erlaubt. Dabei zeigte sich ein massives, breitbandiges Rauschen, welches das eigentliche Biosignal vollständig überlagerte. Als potentielle Ursache wurden Potentialverschiebungen des menschlichen Körpers gegenüber der analogen Masse \texttt{AGND} identifiziert. Da der Körper wie eine Antenne wirkt, koppelt er gegebenenfalls starke Störfrequenzen aus der Umgebung ein, wie beispielsweise das 50Hz Netzbrummen.
+        Nach der Fertigung und Bestückung der neuen Platine wurde das neue System in Betrieb genommen. Zur schnellen visuellen Funktionskontrolle wurde testweise ein \ac{EKG} aufgenommen, da dessen markanter Signalverlauf eine zuverlässige Beurteilung der Hardwarefunktionalität erlaubt. Dabei zeigte sich ein massives, breitbandiges Rauschen, welches das eigentliche Biosignal vollständig überlagerte. Als potentielle Ursache wurden Potentialverschiebungen des menschlichen Körpers gegenüber der analogen Masse \texttt{AGND} identifiziert. Da der Körper wie eine Antenne wirkt, koppelt er gegebenenfalls starke Störfrequenzen aus der Umgebung ein, wie beispielsweise das 50Hz Netzbrummen.
 
         Die Lösung dieses Problems lag darin, den bereits implementierten \ac{RLD} des \textsf{ADS1298} mit der analogen Masse \texttt{AGND} zu verbinden. Diese Schaltung greift das Gleichtaktsignal der Messkanäle ab, invertiert es und speist es aktiv über eine Referenzelektrode zurück in den Körper ein, um die Störungen destruktiv zu überlagern. Da der \ac{RLD}-Kreis jedoch zuvor keinen direkten, stabilen Bezug zu \texttt{AGND} aufwies, konnte er die Potentialverschiebungen nicht optimal ausgleichen. Die Lösung wurde durch das Setzen einer Drahtbrücke realisiert, welche auf den \texttt{AGND}-Pin gesteckt und an der anderen Seite auf das \ac{RLD}-Testfeld gelötet wurde. Mit dieser Anpassung stabilisierte sich das System, wodurch das Breitbandrauschen vollständig und dauerhaft eliminiert werden konnte. Damit bildet das System eine solide Basis für fehlerfreie Signalaufzeichnung im späteren Betrieb.
 
@@ -47,6 +93,6 @@ Die Zuverlässigkeit einer myoelektrischen Prothesensteuerung hängt maßgeblich
 
         Versuche, die Signalqualität durch den zusätzlichen Einsatz von medizinischem Kontaktgel auf zu verbessern, lieferten negative Ergebnisse. Unter dem Anpressdruck der Armbänder verschmierte das Gel flächig auf der Haut und führte zu Kurzschlüssen zwischen den eng beieinander liegenden Kanälen, was die Signalqualität im Vergleich zu einer reinen Trockenmessung massiv verschlechterte.
 
-        Das Gesamtsystem besteht aus zwei separaten Armbändern, mit jeweils acht Elektroden, um die differenzielle Signalaufzeichnung abzubilden. Das P-Kanal-Armband nimmt alle acht positiven Elektrodenanschlüsse auf und wird proximal auf dem Unterarm (näher am Ellenbogen) platziert. Das N-Kanal-Armband hält die acht negativen Anschlüsse, wird distal (näher am Handgelenk) positioniert und ist aufgrund des an dieser Stelle geringeren Armumfangs etwas enger dimensioniert. Die \ac{RLD}-Referenzelektrode wird nach wie vor als einzelne, separate Klebeelektrode unabhängig von den Bändern am Arm positioniert. Eine Anbringung seitlich der Ellenbogenbeuge hat sich als robuste Positionierung erwiesen.
+        Das Gesamtsystem besteht aus zwei separaten Armbändern, mit jeweils acht Elektroden, um die differenzielle Signalaufzeichnung abzubilden. Das P-Kanal-Armband nimmt alle acht positiven Elektrodenanschlüsse auf und wird proximal auf dem Unterarm (näher am Ellenbogen) platziert. Das N-Kanal-Armband hält die acht negativen Anschlüsse, wird distal (näher am Handgelenk) positioniert und ist aufgrund des an dieser Stelle geringeren Armumfangs etwas enger dimensioniert. Die Anordnung der beiden Armbänder am Unterarm sowie die zugehörige Leitungsführung zur Platine sind in \autoref{fig:gesamtaufbau_system} dargestellt. Die \ac{RLD}-Referenzelektrode wird nach wie vor als einzelne, separate Klebeelektrode unabhängig von den Bändern am Arm positioniert. Eine Anbringung seitlich der Ellenbogenbeuge hat sich als robuste Positionierung erwiesen.
 
         Die äquidistante Anordnung der Elektroden über den Armumfang wird durch die exakten Abstände der Einschnitte im Gummiband vorgegeben. Ein gleichmäßiger und konstanter Anpressdruck aller acht Elektroden pro Armband wird nach dem Anlegen über die elastische Spannung des Gummibands erreicht. Da sich diese Kraft gleichmäßig über den Armumfang verteilt, gleicht das Band automatisch Unregelmäßigkeiten aus und verhindert ein Verrutschen bei Bewegungen. 

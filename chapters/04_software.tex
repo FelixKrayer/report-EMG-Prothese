@@ -5,7 +5,7 @@
     \label{subsec:firmware_main}
         Die Basis der Signalverarbeitung bildet die Abfrage des \ac{AFE}. Während im Vorsemester ein \textsf{ADS1294} eingesetzt wurde, bei dem firmwareseitig vier Kanäle aktiv ausgelesen wurden und vier über \ac{SPI} gesendete Dummy-Pakete verworfen wurden, erfolgt in der neuen Version der vollständige Umstieg auf den \textsf{ADS1298}. Damit einhergehend wurde die zentrale Firmware so erweitert, dass nun alle acht verfügbaren Kanäle parallel erfasst und verarbeitet werden.
 
-        Die Kernlogik der Datenaufnahme basiert auf einem interruptgesteuerten System, um eine konstante Abtastrate von $f_S = 1000$\,Hz zu garantieren. Sobald das \ac{AFE} eine Wandlung abgeschlossen hat, zieht es die \texttt{DRDY}-Leitung (Data Ready) auf \textit{LOW}. Dies löst auf dem \textsf{Teensy~4.1} direkt einen Hardware-Interrupt aus, welcher die Abfrage der Daten in der Hauptschleife initiiert. Innerhalb der Schleife werden über den \ac{SPI}-Bus mit einer Frequenz von 1\,MHz insgesamt neun Datenpakete mit jeweils 24 Bit (Status-Byte sowie acht Kanal-Bytes) seriell übertragen. Direkt nach de Einlesen werden die 24-Bit-Werte mittels Sign-Extension in 32-Bit \texttt{int32\_t} umgewandelt. Anschließend werden die Rohwerte mit einem konstanten Faktor multipliziert, um den Messwert in Mikrovolt (\textmu V) darzustellen:
+        Die Kernlogik der Datenaufnahme basiert auf einem interruptgesteuerten System, um eine konstante Abtastrate von $f_S = 1000$\,Hz zu garantieren. Sobald das \ac{AFE} eine Wandlung abgeschlossen hat, zieht es die \texttt{DRDY}-Leitung (Data Ready) auf \textit{LOW}. Dies löst auf dem \textsf{Teensy~4.1} direkt einen Hardware-Interrupt aus, welcher die Abfrage der Daten in der Hauptschleife initiiert. Innerhalb der Schleife werden über den \ac{SPI}-Bus mit einer Frequenz von 1\,MHz insgesamt neun Datenpakete mit jeweils 24 Bit (Status-Byte sowie acht Kanal-Bytes) seriell übertragen. Direkt nach dem Einlesen werden die 24-Bit-Werte mittels Sign-Extension in 32-Bit \texttt{int32\_t} umgewandelt. Anschließend werden die Rohwerte mit einem konstanten Faktor multipliziert, um den Messwert in Mikrovolt (\textmu V) darzustellen:
         \begin{equation*}
             \text{Messwert\,(\textmu V)} = \text{RawValue} \cdot 0,0397 \text{\,\textmu V}
         \end{equation*}
@@ -28,8 +28,8 @@
         \end{equation*}
         \begin{figure}
             \centering
-            \includegraphics[width=0.90\textwidth]{figures/Filter.png}
+            \includegraphics[width=0.85\textwidth]{figures/Filter.png}
             \caption[Vergleich von ungefiltertem und gefiltertem EMG-Signal.]{Vergleich von ungefiltertem (orange) und gefiltertem (blau) \acs{EMG}-Signal. Gut zu erkennen ist die vollständige Eliminierung des 50\,Hz-Netzbrummens sowie dessen harmonischer Oberschwingungen (100\,Hz, 200\,Hz) im Frequenzbereich.}
             \label{fig:filter}
         \end{figure}
-        Die Effektivität dieser Filterkaskade lässt sich signifikant im Frequenzbereich nachweisen. Wie in \autoref*{fig:filter} dargestellt, führt das ungesättigte Rohsignal im Leistungsdichte- und Amplitudenspektrum zu massiven Peaks bei 50\,Hz, 100\,Hz sowie 200\,Hz. Nach der Filterung sind diese Störlinien vollständig eliminiert, während das relevante Frequenzband des \ac{EMG}-Signals für die Merkmalsextraktion erhalten bleibt.
+        Die Effektivität dieser Filterkaskade lässt sich signifikant im Frequenzbereich nachweisen. Wie in \autoref{fig:filter} dargestellt, führt das ungesättigte Rohsignal im Leistungsdichte- und Amplitudenspektrum zu massiven Peaks bei 50\,Hz, 100\,Hz sowie 200\,Hz. Nach der Filterung sind diese Störlinien vollständig eliminiert, während das relevante Frequenzband des \ac{EMG}-Signals für die Merkmalsextraktion erhalten bleibt.
